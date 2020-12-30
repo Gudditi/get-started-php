@@ -1,75 +1,50 @@
+<!DOCTYPE html>
+
+<head>
+	<title>Simple Calculator Program in PHP - Tutorials Class</title>
+</head>
+
 <?php
-/*
- * Copyright IBM Corp. 2016,2019
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
+$first_num = $_POST['first_num'];
+$second_num = $_POST['second_num'];
+$operator = $_POST['operator'];
+$result = '';
+if (is_numeric($first_num) && is_numeric($second_num)) {
+    switch ($operator) {
+        case "Add":
+           $result = $first_num + $second_num;
+            break;
+        case "Subtract":
+           $result = $first_num - $second_num;
+            break;
+        case "Multiply":
+            $result = $first_num * $second_num;
+            break;
+        case "Divide":
+            $result = $first_num / $second_num;
+    }
+}
 
- /**
-  * This PHP file uses the Slim Framework to construct a REST API.
-  * See Cloudant.php for the database functionality
-  */
-require 'vendor/autoload.php';
-require_once('./Cloudant.php');
-$app = new \Slim\Slim();
-$dotenv = new Dotenv\Dotenv(__DIR__);
-try {
-  $dotenv->load();
-} catch (Exception $e) {
-    error_log("No .env file found");
- }
-$app->get('/', function () {
-  global $app;
-    $app->render('index.html');
-});
+?>
 
-$app->get('/api/visitors', function () {
-  global $app;
-  $app->contentType('application/json');
-  $visitors = array();
-  if(Cloudant::Instance()->isConnected()) {
-    $visitors = Cloudant::Instance()->get();
-  }
-  echo json_encode($visitors);
-});
-
-$app->post('/api/visitors', function() {
-  global $app;
-    error_log("POST in /api/visitors");
-  $app->contentType('application/json');
-  $visitor = $app->request()->getBody();
-  #$visitor = json_decode($app->request()->getBody(), true);
-  if(Cloudant::Instance()->isConnected()) {
-    $doc = Cloudant::Instance()->post($visitor);
-    error_log("POST error: $visitor $doc");
-    echo $doc;
-    #echo json_encode($doc);
-  } else {
-    error_log("POST error: $visitor");
-    echo json_encode($visitor);
-  }
-});
-
-$app->delete('/api/visitors/:id', function($id) {
-	global $app;
-	Cloudant::Instance()->delete($id);
-    $app->response()->status(204);
-});
-
-$app->put('/api/visitors/:id', function($id) {
-	global $app;
-	$visitor = json_decode($app->request()->getBody(), true);
-    echo json_encode(Cloudant::Instance()->put($id, $visitor));
-});
-
-$app->run();
+<body>
+    <div id="page-wrap">
+	<h1>PHP - Simple Calculator Program</h1>
+	  <form action="" method="post" id="quiz-form">
+            <p>
+                <input type="number" name="first_num" id="first_num" required="required" value="<?php echo $first_num; ?>" /> <b>First Number</b>
+            </p>
+            <p>
+                <input type="number" name="second_num" id="second_num" required="required" value="<?php echo $second_num; ?>" /> <b>Second Number</b>
+            </p>
+            <p>
+                <input readonly="readonly" name="result" value="<?php echo $result; ?>"> <b>Result</b>
+            </p>
+            <input type="submit" name="operator" value="Add" />
+            <input type="submit" name="operator" value="Subtract" />
+            <input type="submit" name="operator" value="Multiply" />
+            <input type="submit" name="operator" value="Divide" />
+	  </form>
+    </div>
+</body>
+</html>
